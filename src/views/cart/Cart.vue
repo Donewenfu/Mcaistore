@@ -111,7 +111,7 @@ export default {
         this.SUB_GOODS(item.id);
       } else if (item.num == 1) {
         Dialog.confirm({
-          title: "标题",
+          title: "温馨提示",
           message: "您确认要删除吗？",
         })
           .then(() => {
@@ -139,7 +139,10 @@ export default {
           message:'请选择商品再结算！',
           duration:1600
         });
+        return
       }
+      //跳转到订单确认页面
+      this.$router.push('/order')
     },
     //删除已经选中的商品
     checkeddelete(){
@@ -151,8 +154,8 @@ export default {
         return
       }
       Dialog.confirm({
-          title: "标题",
-          message: "您确认要删除吗？",
+          title: "温馨提示",
+          message: "您确认要删除选中的吗？",
         })
           .then(() => {
             // on confirm

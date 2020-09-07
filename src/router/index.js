@@ -11,6 +11,14 @@ const Home = ()=> import('@/views/home/Home')
 const Category = ()=> import('@/views/category/Category')
 const Mine = ()=> import('@/views/mine/Mine')
 
+//订单页面路由懒加载
+const Order = ()=>import('@/views/order/Order')
+//订单子路由
+const Myaddrss = ()=>import('@/views/order/childrenrouter/Myaddress')
+//添加地址子路由
+const Addaddress = ()=>import('@/views/order/childrenrouter/sonrouter/Addaddress')
+//编辑地址子路由
+const Editaddress = ()=>import('@/views/order/childrenrouter/sonrouter/EditAddress')
 
 const routes = [
   {
@@ -51,6 +59,30 @@ const routes = [
         path:'mine',
         name:'mine',
         component:Mine
+      }
+    ]
+  },
+  {
+    path:'/order',
+    name:'order',
+    component:Order,
+    children:[
+      {
+        path:'myaddress',
+        name:'myaddress',
+        component:Myaddrss,
+        children:[
+          {
+            path:'addaddress',
+            name:'addaddress',
+            component:Addaddress
+          },
+          {
+            path:'editaddress',
+            name:'editaddress',
+            component:Editaddress
+          }
+        ]
       }
     ]
   }
