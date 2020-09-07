@@ -95,15 +95,18 @@ export default {
     Mlike,
   },
   mounted() {
-      //获取首页数据
+    //获取首页数据
     this.getIndexData();
   },
   methods: {
-       //获取首页数据
+    //获取首页数据
     async getIndexData() {
-         let data = await getHomeData();
+       let randomnum = parseInt(Math.random()*(4-0+1)+0)
+      //获取随机数
+      let listrandom = [3, 4, 5, 6, 7];
+      let data = await getHomeData();
       //猜你喜欢数据
-      this.MlikeList = data.data.list[4].product_list;
+      this.MlikeList = data.data.list[listrandom[randomnum]].product_list;
     },
   },
 };
@@ -119,8 +122,8 @@ export default {
   /deep/.van-nav-bar {
     background-color: #f5f5f5;
   }
-  .mlike{
-      padding: 0;
+  .mlike {
+    padding: 0;
   }
   .m-userinfo {
     margin-top: 10px;

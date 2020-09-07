@@ -6,7 +6,7 @@ module.exports = {
         config
             .plugin('html')
             .tap((args) => {
-                args[0].title = '小撩买菜';
+                args[0].title = 'Mcaishop';
                 return args;
             });
     },

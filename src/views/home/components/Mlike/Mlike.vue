@@ -33,6 +33,7 @@ export default {
     .mlike-content{
         display: flex;
         flex-wrap: wrap;
+        justify-content: space-between;
     }
     .mlike-title{
         text-align: center;
