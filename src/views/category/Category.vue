@@ -6,9 +6,9 @@
     <div class="category-content" v-show="isshowloding">
       <!-- 左边商品列表区域 -->
       <div class="category-left" ref="catelist">
-        <ul class="wraplist" >
+        <ul class="wraplist">
           <li
-           ref="listdom"
+            ref="listdom"
             v-for="(catename,index) in cateListData"
             :key="catename.id"
             class="catenameitem"
@@ -44,10 +44,10 @@ import better from "better-scroll";
 import { getCategoryData, getCategoryproduct } from "@/service/api/index";
 
 //引入消息订阅
-import pubsub from 'pubsub-js'
+import pubsub from "pubsub-js";
 
 //引入vuex
-import {mapMutations} from 'vuex'
+import { mapMutations } from "vuex";
 
 export default {
   data() {
@@ -66,7 +66,7 @@ export default {
     Mcateproduct,
   },
   methods: {
-    ...mapMutations(['Add_GOODS']),
+    ...mapMutations(["Add_GOODS"]),
     //获取分类数据
     async getCateList() {
       let data = await getCategoryData();
@@ -79,16 +79,16 @@ export default {
       this.$nextTick(() => {
         const options = {
           click: true,
-          taps: true
+          taps: true,
         };
-       this.scroll = new better(wrapdom, options);
+        this.scroll = new better(wrapdom, options);
       });
     },
     //点击分类
     clickcatelist(index) {
-      let listDom = this.$refs.listdom
-    //   滚动到的目标元素,
-     this.scroll.scrollToElement(listDom[index])
+      let listDom = this.$refs.listdom;
+      //   滚动到的目标元素,
+      this.scroll.scrollToElement(listDom[index]);
       this.onnum = index;
       this.getcateproduct(index + 1);
     },
@@ -103,7 +103,7 @@ export default {
     this.getCateList();
     //获取商品的数据
     this.getcateproduct();
-        //订阅消息的名称
+    //订阅消息的名称
     let addcartsubscription = "cateadd";
     pubsub.subscribe(addcartsubscription, (msg, value) => {
       //判断是否是订阅的添加购物车的消息
@@ -115,11 +115,14 @@ export default {
           good_name: value.name,
         });
         this.$toast({
-          message:'商品添加成功！',
-          duration:1600
+          message: "商品添加成功！",
+          duration: 1600,
         });
       }
-    })
+    });
+  },
+  beforeDestroy() {
+    pubsub.unsubscribe("cateadd");
   },
 };
 </script>

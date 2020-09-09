@@ -9,6 +9,8 @@ import { AddressList } from 'vant';
 import { AddressEdit } from 'vant';
 import { Cell, CellGroup } from 'vant';
 import { SubmitBar } from 'vant';
+import { Swipe, SwipeItem } from 'vant';
+
 
 
 
@@ -17,6 +19,8 @@ import { SubmitBar } from 'vant';
 
 
 // 全局注册
+Vue.use(Swipe);
+Vue.use(SwipeItem); 
 Vue.use(SubmitBar);
 Vue.use(Cell);
 Vue.use(CellGroup);

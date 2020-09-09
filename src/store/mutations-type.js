@@ -10,3 +10,11 @@ export const SELECT_SINGLE = 'SELECT_SINGLE'
 export const SELECT_ALL = 'SELECT_ALL'
 //删除已经选中的商品
 export const DELETE_SINGLE = 'DELETE_SINGLE'
+//登录成功保存用户信息
+export const SAVE_USERINFO = 'SAVE_USERINFO'
+//初始化用户信息
+export const INIT_USERINFO = 'INIT_USERINFO'
+//退出登录
+export const LOGIN_OUT = 'LOGIN_OUT'
+//清空购物车的数据
+export const CLEAR_CART = 'CLEAR_CART'

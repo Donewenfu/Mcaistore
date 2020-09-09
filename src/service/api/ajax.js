@@ -1,8 +1,11 @@
 import axios from 'axios'
 
+
 axios.interceptors.response.use((response)=>{
     return response.data
 })
+
+
 
 export default function ajax(url='',params={},type='GET'){
     let promise = ''
@@ -19,8 +22,9 @@ export default function ajax(url='',params={},type='GET'){
             if(paramsStr){
                 paramsStr = paramsStr.substr(0,paramsStr.lastIndexOf('&'));
             }
+            let gettime = new Date().getTime();
             //拼接完整路径
-            url=url+'?'+paramsStr
+            url=url+'?'+paramsStr+'&itlike='+gettime
             //发起get请求
             promise = axios.get(url);
 

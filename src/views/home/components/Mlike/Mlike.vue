@@ -34,6 +34,9 @@ export default {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
+        a{
+            width: 50%;
+        }
     }
     .mlike-title{
         text-align: center;

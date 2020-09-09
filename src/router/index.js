@@ -1,13 +1,22 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+
 Vue.use(VueRouter)
+
+
 
 //引入组件
 import Dashboard from '@/views/dashboard/Dashboard'
 
+//引入vuex 
+import store from '@/store/index'
+
+//因为个人中心要添加商品 使用到了发布和订阅 所以不能使用懒加载
+import Home from '@/views/home/Home'
+
 //路由懒加载
 const Cart = ()=> import('@/views/cart/Cart')
-const Home = ()=> import('@/views/home/Home')
+// const Home = ()=> import('@/views/home/Home')
 const Category = ()=> import('@/views/category/Category')
 const Mine = ()=> import('@/views/mine/Mine')
 
@@ -19,6 +28,12 @@ const Myaddrss = ()=>import('@/views/order/childrenrouter/Myaddress')
 const Addaddress = ()=>import('@/views/order/childrenrouter/sonrouter/Addaddress')
 //编辑地址子路由
 const Editaddress = ()=>import('@/views/order/childrenrouter/sonrouter/EditAddress')
+//登录页面
+const Login = ()=>import('@/views/login/Login')
+
+//详情页面
+const Detail = ()=>import('@/views/detail/Detail')
+
 
 const routes = [
   {
@@ -85,11 +100,26 @@ const routes = [
         ]
       }
     ]
+  },
+  {
+    path:'/login',
+    name:'login',
+    component:Login
+  },
+  {
+    path:'/detail/:id',
+    name:'detail',
+    component:Detail
   }
 ]
+
+
 
 const router = new VueRouter({
   routes
 })
 
+
 export default router
+
+

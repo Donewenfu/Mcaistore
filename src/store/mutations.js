@@ -1,7 +1,7 @@
 //引入mutations-type名字限制
-import {Add_GOODS,INIT_SHOP_CART,SUB_GOODS,SELECT_SINGLE,SELECT_ALL,DELETE_SINGLE} from './mutations-type'
+import {Add_GOODS,INIT_SHOP_CART,SUB_GOODS,SELECT_SINGLE,SELECT_ALL,DELETE_SINGLE,SAVE_USERINFO,INIT_USERINFO,LOGIN_OUT,CLEAR_CART} from './mutations-type'
 //引入本地存储
-import {setLocalStorage,getLocalStorage} from '@/config/global'
+import {setLocalStorage,getLocalStorage,removeLocalStorage} from '@/config/global'
 
 import Vue from 'vue'
 
@@ -99,6 +99,38 @@ export default{
         state.shopCart = {...newobj}
         //本地存储
         setLocalStorage('shopCart',newobj)
+    },
+    //保存用户信息
+    [SAVE_USERINFO](state,userinfo){
+        //把用户信息保存到vuex中
+        state.acountinfo = userinfo;
+        //把用户信息保存到本地
+        setLocalStorage('userinfo',state.acountinfo)
+    },
+    //初始化用户信息
+    [INIT_USERINFO](state){
+        
+        //获取本地存储的用户信息
+        let userinfo = getLocalStorage('userinfo');
+        //判断是否有值
+        if(userinfo){
+            state.acountinfo = JSON.parse(userinfo)
+        }
+    },
+    //退出登录
+    [LOGIN_OUT](state){
+        //退出登录
+        //清空vuex用户的信息
+        state.acountinfo = {};
+        //清除本地存储的用户信息
+        removeLocalStorage('userinfo')
+    },
+    //清空购物车数据
+    [CLEAR_CART](state){
+        //清空本地数据
+        removeLocalStorage('shopCart');
+        //清空vuex的购物车数据
+        state.shopCart = {}
     }
 
 }

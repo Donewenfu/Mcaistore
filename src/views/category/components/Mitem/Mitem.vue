@@ -26,6 +26,7 @@
 <script>
 //引入消息订阅
 import pubsub from 'pubsub-js'
+import { mapState } from 'vuex';
 
 export default {
   data() {
@@ -36,9 +37,16 @@ export default {
   },
   methods: {
     addprduct(item){
+      if(!this.acountinfo.token){
+        this.$router.push('/login')
+        return
+      }
       pubsub.publish('cateadd',item)
     }
   },
+  computed:{
+    ...mapState(['acountinfo'])
+  }
 };
 </script>
 

@@ -14,6 +14,8 @@ if ('addEventListener' in document) {
 
 
 
+
+
 //引入vanUI 插件
 import '@/plugs/vantui.js'
 

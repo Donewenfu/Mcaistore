@@ -74,24 +74,7 @@ export default {
     isshowtop((state) => {
       this.isshowtopicon = state;
     });
-    //订阅消息(添加到购物车)
-    //订阅消息的名称
-    let addcartsubscription = "addsubscription";
-    pubsub.subscribe(addcartsubscription, (msg, value) => {
-      //判断是否是订阅的添加购物车的消息
-      if (msg == "addsubscription") {
-        this.Add_GOODS({
-          goods_id: value.id,
-          goods_img: value.small_image,
-          goods_price: value.price,
-          good_name: value.name,
-        });
-        this.$toast({
-          message:'商品添加成功！',
-          duration:1600
-        });
-      }
-    })
+
   },
   methods: {
     //mutations是方法所以要在此处使用
@@ -118,6 +101,9 @@ export default {
       this.MlikeList = data.data.list[4].product_list;
     },
   },
+  beforeDestroy() {
+        pubsub.unsubscribe('addsubscription')
+    },
 };
 </script>
 

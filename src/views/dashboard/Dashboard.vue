@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import {mapState,mapMutations} from 'vuex'
+import {mapState,mapMutations,mapActions} from 'vuex'
 export default {
   data() {
     return {
@@ -68,9 +68,16 @@ export default {
   mounted() {
     //调用vuex 获取本地数据的方法
     this.INIT_SHOP_CART()
+    //初始化用户数据
+    this.autologins();
+    //判断activeicon
+    if(this.$route.name=='cart'){
+      this.active = 2
+    }
   },
   methods: {
-    ...mapMutations(['INIT_SHOP_CART'])
+    ...mapActions(['autologins']),
+    ...mapMutations(['INIT_SHOP_CART','INIT_USERINFO'])
   },
   computed: {
     ...mapState(['shopCart']),
@@ -78,9 +85,7 @@ export default {
     productnum(){
       let num = 0
       Object.values(this.shopCart).forEach((item,index)=>{
-          if(item.ischecked){
-            num+=1
-          }
+          num+=item.num
       })
       return num
     }

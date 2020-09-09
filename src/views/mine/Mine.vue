@@ -1,18 +1,18 @@
 <template>
-  <div id="mine">
+  <div id="mine" v-if="acountinfo.token">
     <!-- 用户信息 -->
     <div class="m-userinfo">
       <div class="m-user-img">
         <img
-          src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=437190255,842548198&fm=11&gp=0.jpg"
+          :src="userinfo.icon_url"
           alt
         />
       </div>
       <div class="m-user-info">
-        <span>emm三娃</span>
+        <span>{{userinfo.real_name}}</span>
         <div class="m-user-phone">
           <i class="iconfont">&#xe671;</i>
-          <span>18581569814</span>
+          <span>{{userinfo.phone}}</span>
         </div>
       </div>
     </div>
@@ -71,12 +71,17 @@
             <i class="iconfont">&#xe618;</i>
             <p>设置</p>
           </li>
+          <li @click="loginout">
+            <i class="iconfont">&#xe612;</i>
+            <p>退出登录</p>
+          </li>
         </ul>
       </div>
     </div>
     <Mlike :MlikeList="MlikeList"></Mlike>
   </div>
   <!-- </div> -->
+  <Selectlogin v-else></Selectlogin>
 </template>
 
 <script>
@@ -84,30 +89,59 @@
 import { getHomeData } from "@/service/api/index";
 //猜你喜欢
 import Mlike from "@/views/home/components/Mlike/Mlike";
+//引入组件
+import Selectlogin from "../login/Selectlogin";
+//vuex
+import { mapState,mapActions } from "vuex";
+//vantUI
+import { Dialog } from 'vant';
+import {getLocalStorage} from '@/config/global'
 export default {
   data() {
     return {
       //猜你喜欢数据
       MlikeList: [],
+      userinfo:''
     };
   },
   components: {
     Mlike,
+    Selectlogin,
   },
   mounted() {
     //获取首页数据
     this.getIndexData();
+    //用户数据获取
+    this.userinfo = JSON.parse(getLocalStorage('userinfo'));
   },
   methods: {
+    ...mapActions(['loginouts']),
     //获取首页数据
     async getIndexData() {
-       let randomnum = parseInt(Math.random()*(4-0+1)+0)
+      let randomnum = parseInt(Math.random() * (4 - 0 + 1) + 0);
       //获取随机数
       let listrandom = [3, 4, 5, 6, 7];
       let data = await getHomeData();
       //猜你喜欢数据
       this.MlikeList = data.data.list[listrandom[randomnum]].product_list;
     },
+    //退出登录
+    loginout() {
+      Dialog.confirm({
+        title: "温馨提示",
+        message: "您确认退出吗？",
+      })
+        .then(() => {
+          // on confirm
+          this.loginouts()
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
+  },
+  computed: {
+    ...mapState(["shopCart", "acountinfo"]),
   },
 };
 </script>

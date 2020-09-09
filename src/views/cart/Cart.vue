@@ -1,5 +1,5 @@
 <template>
-  <div id="cart">
+  <div id="cart" v-if="acountinfo.token">
     <!-- 购物车头部 -->
     <div class="mcartheader">
       <p>购物车</p>
@@ -13,7 +13,9 @@
           <i class="iconfont isfalse" v-else @click="selectSingle(item)">&#xe600;</i>
         </div>
         <div class="itemimg">
+          <router-link :to="'/detail/'+item.id">
           <img :src="item.img" alt />
+          </router-link>
         </div>
         <div class="iteminfo">
           <p class="cart-p-name">{{item.name}}</p>
@@ -49,6 +51,7 @@
       </div>
     </div>
   </div>
+  <Selectlogin v-else></Selectlogin>
 </template>
 
 <script>
@@ -56,6 +59,8 @@
 import { mapState, mapMutations } from "vuex";
 //引入vantUI 
 import { Dialog } from 'vant';
+//引入组件
+import Selectlogin from '../login/Selectlogin'
 export default {
   data() {
     return {
@@ -63,10 +68,13 @@ export default {
     };
   },
   components: {
-
+    Selectlogin
+  },
+  mounted() {
+    
   },
   computed: {
-    ...mapState(["shopCart"]),
+    ...mapState(["shopCart",'acountinfo']),
     //全选状态
     selectAlls(){
       let seAll = this.countnum>0
