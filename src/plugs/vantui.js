@@ -10,6 +10,12 @@ import { AddressEdit } from 'vant';
 import { Cell, CellGroup } from 'vant';
 import { SubmitBar } from 'vant';
 import { Swipe, SwipeItem } from 'vant';
+import { DatetimePicker } from 'vant';
+import { Popup } from 'vant';
+import { Tab, Tabs } from 'vant';
+
+
+
 
 
 
@@ -19,6 +25,10 @@ import { Swipe, SwipeItem } from 'vant';
 
 
 // 全局注册
+Vue.use(Popup);
+Vue.use(Tab);
+Vue.use(Tabs);
+Vue.use(DatetimePicker);
 Vue.use(Swipe);
 Vue.use(SwipeItem); 
 Vue.use(SubmitBar);

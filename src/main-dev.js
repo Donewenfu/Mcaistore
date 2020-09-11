@@ -6,6 +6,7 @@ import store from './store'
 //引入fastclick
 import FastClick from 'fastclick'
 
+
 if ('addEventListener' in document) {
   document.addEventListener('DOMContentLoaded', function() {
       FastClick.attach(document.body);
@@ -29,6 +30,10 @@ import "swiper/dist/css/swiper.css";
 
 //定义全局过滤器
 import '@/config/filter.js'
+
+//生成二维码
+import VueQriously from 'vue-qriously'
+Vue.use(VueQriously)
 
 
 Vue.config.productionTip = false

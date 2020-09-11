@@ -6,51 +6,49 @@
     <van-address-edit
       :area-list="areaList"
       show-postal
-      show-delete
       show-set-default
       show-search-result
       :search-result="searchResult"
       :area-columns-placeholder="['请选择', '请选择', '请选择']"
       @save="onSave"
-      @delete="onDelete"
-      @change-detail="onChangeDetail"
     />
   </div>
 </template>
 
 <script>
 import { Toast } from "vant";
+import areajs from '@/config/area'
+import {mapState} from 'vuex'
+//引入网络请求
+import {addUserAddress} from '@/service/api/index'
+//通知与订阅
+import pubsub from 'pubsub-js'
 export default {
   data() {
     return {
-      areaList:{},
+      areaList:areajs,
       searchResult: [],
     };
   },
   methods: {
-    onSave() {
-      Toast("save");
-    },
-    onDelete() {
-      Toast("delete");
-    },
-    onChangeDetail(val) {
-      if (val) {
-        this.searchResult = [
-          {
-            name: "黄龙万科中心",
-            address: "杭州市西湖区",
-          },
-        ];
-      } else {
-        this.searchResult = [];
-      }
+    async onSave(content) {
+      console.log(content)
+       let result = await addUserAddress(this.acountinfo.token, content.name, content.tel, content.province+content.city+content.county, content.addressDetail, content.postalCode, content.isDefault, content.province, content.city, content.county, content.areaCode);
+       if(result.success_code===200){
+         //添加成功以后提示地址列表请求接口
+         pubsub.publish('addressok')
+         //返回地址列表
+         this.$router.back()
+       }
     },
     //返回
     onClickLeft(){
         this.$router.back()
     }
   },
+  computed:{
+    ...mapState(['acountinfo'])
+  }
 };
 </script>
 
@@ -59,9 +57,9 @@ export default {
         max-width: 750px;
         margin: 0 auto;
         height: 100%;
-        position: absolute;
+        position: fixed;
         left: 0;
-        top: 0;
+        top: 40px;
         bottom: 0;
         right: 0;
         z-index: 9999;

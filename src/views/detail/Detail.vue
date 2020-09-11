@@ -100,8 +100,8 @@ export default {
     },
     //详情页接口
     async getdetailinfo(id){
-        let data = await axios.get('/api/api/detail/'+id)
-        console.log(data)
+        let data = await axios.get('http://api.wenfu814.xyz/web/xlmc/api/detail/'+id)
+        // console.log(data)
         this.detailinfodata = data.result
     },
     //添加购物车

@@ -34,6 +34,9 @@ const Login = ()=>import('@/views/login/Login')
 //详情页面
 const Detail = ()=>import('@/views/detail/Detail')
 
+//订单详情页面
+const OrderDetail = ()=>import('@/views/orderdetail/Orderdetail')
+
 
 const routes = [
   {
@@ -110,6 +113,11 @@ const routes = [
     path:'/detail/:id',
     name:'detail',
     component:Detail
+  },
+  {
+    path:'/orderdetail',
+    name:'orderdetail',
+    component:OrderDetail
   }
 ]
 

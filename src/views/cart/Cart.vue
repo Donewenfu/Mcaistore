@@ -6,7 +6,8 @@
       <span @click="checkeddelete">删除</span>
     </div>
     <!-- 购物车中间区域 -->
-    <div class="mcartmiddle">
+    <div class="mcartmiddle" v-if="Object.values(shopCart).length>=1">
+      <!-- v-for也可以循环对象 -->
       <div class="cartitem" v-for="(item,index) in shopCart" :key="item.id">
         <div class="itemcheck">
           <i class="iconfont istrue" v-if="item.ischecked" @click="selectSingle(item)">&#xe65a;</i>
@@ -14,7 +15,7 @@
         </div>
         <div class="itemimg">
           <router-link :to="'/detail/'+item.id">
-          <img :src="item.img" alt />
+            <img :src="item.img" alt />
           </router-link>
         </div>
         <div class="iteminfo">
@@ -24,14 +25,19 @@
               <span>{{item.price|moneyformat}}</span>
             </div>
             <div class="cartitem-num">
-              <i class="iconfont" @click="subcart(item)">&#xe608;</i>
+              <i class="iconfont" @click.stop="subcart(item)">&#xe608;</i>
               <input type="text" v-model="item.num" disabled />
-              <i class="iconfont" @click="addshopcart(item)">&#xe602;</i>
+              <i class="iconfont" @click.stop="addshopcart(item)">&#xe602;</i>
             </div>
           </div>
         </div>
       </div>
+      
     </div>
+    <div class="listnone" v-else>
+            <img src="../../images/cart/nonelist.png" alt="">
+            <p>快去把我填满吧！</p>
+          </div>
     <!-- 底部结算 -->
     <div class="bottom-cart">
       <div class="cart-b-check">
@@ -47,7 +53,10 @@
         <p>已免配送费</p>
       </div>
       <div class="car-b-go" @click="gopay">
-        <span>去结算<span v-if="countnum>0">({{countnum}})</span></span>
+        <span>
+          去结算
+          <span v-if="countnum>0">({{countnum}})</span>
+        </span>
       </div>
     </div>
   </div>
@@ -57,74 +66,94 @@
 <script>
 //引入vuex
 import { mapState, mapMutations } from "vuex";
-//引入vantUI 
-import { Dialog } from 'vant';
+//引入vantUI
+import { Dialog, Toast } from "vant";
 //引入组件
-import Selectlogin from '../login/Selectlogin'
+import Selectlogin from "../login/Selectlogin";
+//引入网络请求
+import { cartnummodif, deletecart,singerGoodsSelect,allGoodsSelect } from "@/service/api/index";
 export default {
   data() {
     return {
-      selectallvuex:true
+      selectallvuex: true,
     };
   },
   components: {
-    Selectlogin
+    Selectlogin,
   },
   mounted() {
-    
+
   },
   computed: {
-    ...mapState(["shopCart",'acountinfo']),
+    ...mapState(["shopCart", "acountinfo"]),
     //全选状态
-    selectAlls(){
-      let seAll = this.countnum>0
-      Object.values(this.shopCart).forEach((item,index)=>{
-        if(!item.ischecked){
-          seAll = false
+    selectAlls() {
+      let seAll = this.countnum > 0;
+      Object.values(this.shopCart).forEach((item, index) => {
+        if (!item.ischecked) {
+          seAll = false;
         }
-      })
-      return seAll
+      });
+      return seAll;
     },
     //去结算的数量
-    countnum(){
+    countnum() {
       let pnum = 0;
       let productlist = Object.values(this.shopCart);
       //循环遍历，选中的商品才显示数字
-      productlist.forEach((item,index)=>{
-          if(item.ischecked){
-            pnum+=1
-          }
-      })
-      return pnum
+      productlist.forEach((item, index) => {
+        if (item.ischecked) {
+          pnum += 1;
+        }
+      });
+      return pnum;
     },
     //计算商品总价
-    totalprice(){
+    totalprice() {
       let total = 0;
       //对象的值转为数组进行遍历
       let productList = Object.values(this.shopCart);
       //遍历数组 如果选中的商品才去计算总价
-      productList.forEach((item,index)=>{
-        if(item.ischecked){
-          total+=item.price*item.num
+      productList.forEach((item, index) => {
+        if (item.ischecked) {
+          total += item.price * item.num;
         }
-      })
-      return total.toFixed(2)
-    }
+      });
+      return total.toFixed(2);
+    },
   },
   methods: {
-    ...mapMutations(["SUB_GOODS",'SELECT_SINGLE','SELECT_ALL','DELETE_SINGLE','Add_GOODS']),
-    subcart(item) {
+    ...mapMutations([
+      "SUB_GOODS",
+      "SELECT_SINGLE",
+      "SELECT_ALL",
+      "DELETE_SINGLE",
+      "Add_GOODS",
+    ]),
+    async subcart(item) {
       //判断是否已经删除到1个了
       if (item.num > 1) {
+        //发起减去商品的接口
+        let result = await cartnummodif(
+          this.acountinfo.token,
+          item.id,
+          "reduce"
+        );
         this.SUB_GOODS(item.id);
       } else if (item.num == 1) {
         Dialog.confirm({
           title: "温馨提示",
           message: "您确认要删除吗？",
         })
-          .then(() => {
+          .then(async () => {
+            //删除接口
+            let result = await cartnummodif(
+              this.acountinfo.token,
+              item.id,
+              "reduce"
+            );
             // on confirm
-           this.SUB_GOODS(item.id);
+            this.SUB_GOODS(item.id);
           })
           .catch(() => {
             // on cancel
@@ -132,59 +161,70 @@ export default {
       }
     },
     //单选
-    selectSingle(item){
-      this.SELECT_SINGLE(item.id)
+    async selectSingle(item) {
+      //接口
+      let result = await singerGoodsSelect(this.acountinfo.token,item.id)
+      this.SELECT_SINGLE(item.id);
     },
     //全选
-    selectAll(selectall){
+    async selectAll(selectall) {
+      //接口
+      let result = await allGoodsSelect(this.acountinfo.token,selectall)
       //执行vuex mutations 中的全选方法
-      this.SELECT_ALL(selectall)
+      this.SELECT_ALL(selectall);
     },
     //去结算
-    gopay(){
-      if(this.countnum<=0){
+    gopay() {
+      if (this.countnum <= 0) {
         this.$toast({
-          message:'请选择商品再结算！',
-          duration:1600
+          message: "请选择商品再结算！",
+          duration: 1600,
         });
-        return
+        return;
       }
       //跳转到订单确认页面
-      this.$router.push('/order')
+      this.$router.push("/order");
     },
     //删除已经选中的商品
-    checkeddelete(){
-      if(this.countnum<=0){
+    checkeddelete() {
+      if (this.countnum <= 0) {
         this.$toast({
-          message:'没有要删除的商品！',
-          duration:1600
+          message: "没有要删除的商品！",
+          duration: 1600,
         });
-        return
+        return;
       }
       Dialog.confirm({
-          title: "温馨提示",
-          message: "您确认要删除选中的吗？",
-        })
-          .then(() => {
+        title: "温馨提示",
+        message: "您确认要删除选中的吗？",
+      })
+        .then(async () => {
+          let result = await deletecart(this.acountinfo.token);
+          if (result.success_code === 200) {
+            this.$toast({
+              message: "购物车已经清空",
+              duration: 1600,
+            });
             // on confirm
-           this.DELETE_SINGLE()  
-          })
-          .catch(() => {
-            // on cancel
-          });
+            this.DELETE_SINGLE();
+          }
+        })
+        .catch(() => {
+          // on cancel
+        });
       // console.log(1)
-      
     },
     //添加商品数量
-    addshopcart(item){
-      console.log(item)
-        this.Add_GOODS({
-          goods_id:item.id,
-          goods_img:item.img,
-          goods_price:item.price,
-          good_name:item.name
-        })
-    }
+    async addshopcart(item) {
+      let result = await cartnummodif(this.acountinfo.token, item.id, "add");
+      console.log(result);
+      this.Add_GOODS({
+        goods_id: item.id,
+        goods_img: item.img,
+        goods_price: item.price,
+        good_name: item.name,
+      });
+    },
   },
 };
 </script>
@@ -316,7 +356,7 @@ export default {
       .istrue {
         color: #45c46d;
       }
-      .isfalse{
+      .isfalse {
         color: #cccccc;
       }
     }
@@ -346,7 +386,7 @@ export default {
     }
     .car-b-go {
       flex: 1;
-      background-color: #fe6263;
+      background:linear-gradient(to right,#ff6034,#ee0a24);
       font-size: 15px;
       color: #fff;
       text-align: center;
@@ -356,6 +396,18 @@ export default {
       align-items: center;
       justify-content: center;
       margin: 10px;
+    }
+  }
+  .listnone{
+    margin-top: 156px;
+    text-align: center;
+    img{
+      margin: 0 auto;
+      width: 200px;
+    }
+    p{
+      font-size: 16px;
+      color: #999;
     }
   }
 }

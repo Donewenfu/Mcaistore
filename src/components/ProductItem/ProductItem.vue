@@ -1,14 +1,12 @@
 <template>
-
-<div
+  <div
     :class="{'mproductitem':typeclass === 'small','mproductitem_big':typeclass === 'big'}"
     :style="{borderRadius:(isradius?'10px':'0px')}"
   >
     <div class="mp-img">
       <router-link :to="'/detail/'+data.id">
-      <img :src="data.small_image" alt />
+        <img :src="data.small_image" alt />
       </router-link>
-      
     </div>
     <div class="mp-title">
       <p class="ellipsis2">{{data.name}}</p>
@@ -19,16 +17,14 @@
       <i class="iconfont" @click.stop="addcart(data)">&#xe7a6;</i>
     </div>
   </div>
-
-  
 </template>
 
 <script>
 //引入消息订阅
 import pubsub from "pubsub-js";
-import { mapMutations,mapState } from "vuex";
+import { mapMutations, mapState } from "vuex";
 //引入网络请求
-import {addproductadd} from '@/service/api/index'
+import { addproductadd } from "@/service/api/index";
 
 export default {
   data() {
@@ -54,34 +50,40 @@ export default {
       default: false,
     },
   },
-  mounted() {
-    
-  },
+  mounted() {},
   methods: {
     ...mapMutations(["Add_GOODS"]),
     //添加到购物车
     async addcart(product) {
-    if(!this.acountinfo.token){
-      this.$router.push('/login')
-      return
-    }
-    let result = await addproductadd(this.acountinfo.token,product.id,product.name,product.price,product.small_image);
-    //提交vuex
-      this.Add_GOODS({
-        goods_id: product.id,
-        goods_img: product.small_image,
-        goods_price: product.price,
-        good_name: product.name,
-      });
-      this.$toast({
-        message: "商品添加成功！",
-        duration: 1600,
-      });
+      if (!this.acountinfo.token) {
+        this.$router.push("/login");
+        return;
+      }
+      let result = await addproductadd(
+        this.acountinfo.token,
+        product.id,
+        product.name,
+        product.price,
+        product.small_image
+      );
+      if (result.success_code == 200) {
+        //提交vuex
+        this.Add_GOODS({
+          goods_id: product.id,
+          goods_img: product.small_image,
+          goods_price: product.price,
+          good_name: product.name,
+        });
+        this.$toast({
+          message: "商品添加成功！",
+          duration: 1600,
+        });
+      }
     },
   },
-  computed:{
-    ...mapState(['acountinfo'])
-  }
+  computed: {
+    ...mapState(["acountinfo"]),
+  },
 };
 </script>
 

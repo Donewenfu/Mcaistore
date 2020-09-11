@@ -29,7 +29,7 @@ export default{
         //把添加的数据存入本地
         setLocalStorage('shopCart',shopCart)
     },
-    //初始化购物车的数据(本地)
+    //初始化购物车的数据(本地) 把数据存储到vuex中
     [INIT_SHOP_CART](state){
         let initShopCart = getLocalStorage('shopCart');
         //判断是否有值

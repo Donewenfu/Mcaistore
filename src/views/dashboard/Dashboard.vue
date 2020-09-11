@@ -35,6 +35,8 @@
 
 <script>
 import {mapState,mapMutations,mapActions} from 'vuex'
+import {getcartData} from '@/service/api/index'
+import {setLocalStorage} from '@/config/global'
 export default {
   data() {
     return {
@@ -74,13 +76,38 @@ export default {
     if(this.$route.name=='cart'){
       this.active = 2
     }
+    //如果有用户信息 那么就请求购物车数据
+    if(this.acountinfo.token){
+      //初始化购物车数据
+      this.initshopcart(this.acountinfo.token)
+    }
   },
   methods: {
     ...mapActions(['autologins']),
-    ...mapMutations(['INIT_SHOP_CART','INIT_USERINFO'])
+    ...mapMutations(['INIT_SHOP_CART','INIT_USERINFO']),
+    //初始化购物车
+    async initshopcart(id){
+      let result = await getcartData(id)
+      let cartdata = result.data;
+      let shopCart = {}
+      cartdata.forEach((item,index)=>{
+        shopCart[item.goods_id] = {
+          id:item.goods_id,
+          img:item.small_image,
+          ischecked:item.checked,
+          name:item.goods_name,
+          num:item.num,
+          price:item.goods_price
+        }
+      })
+      //把数据同步到本地
+      setLocalStorage('shopCart',shopCart);
+      //初始化数据 同步到vuex中
+      this.INIT_SHOP_CART()
+    }
   },
   computed: {
-    ...mapState(['shopCart']),
+    ...mapState(['shopCart','acountinfo']),
     //product num 
     productnum(){
       let num = 0

@@ -1,7 +1,7 @@
 <template>
   <div id="myaddress">
     <!-- 显示编辑和新增地址子路由 -->
-    <router-view></router-view>
+    <router-view @editaddok='editokgetlist'></router-view>
     <!-- 导航 -->
     <van-nav-bar title="我的地址" left-arrow :fixed="true" @click-left="onClickLeft" />
     <!-- 地址列表区域 -->
@@ -9,9 +9,9 @@
       <van-address-list
         v-model="chosenAddressId"
         :list="list"
-        default-tag-text="默认"
         @add="onAdd"
         @edit="onEdit"
+        @select='selectadd'
       />
     </div>
   </div>
@@ -19,26 +19,35 @@
 
 <script>
 import { Toast } from 'vant';
+//引入网络请求
+import {getUserAddress} from '@/service/api/index'
+import { mapState } from 'vuex';
+import pubsub from 'pubsub-js'
 export default {
   data() {
     return {
       chosenAddressId: "1",
-      list: [
-        {
-          id: "1",
-          name: "张三",
-          tel: "13000000000",
-          address: "浙江省杭州市西湖区文三路 138 号东方通信大厦 7 楼 501 室",
-          isDefault: true,
-        },
-        {
-          id: "2",
-          name: "李四",
-          tel: "1310000000",
-          address: "浙江省杭州市拱墅区莫干山路 50 号",
-        },
-      ]
+      list: []
     }
+  },
+  computed:{
+    ...mapState(['acountinfo'])
+  },
+  mounted(){
+    //获取地址接口
+    this.getaddresslist(this.acountinfo.token)
+    //订阅添加地址成功的消息
+    pubsub.subscribe('addressok',(msg)=>{
+      if(msg==='addressok'){
+        this.getaddresslist(this.acountinfo.token)
+      }
+    })
+    //订阅消息删除成功以后再次请求地址数据
+    pubsub.subscribe('addressdelete',(msg)=>{
+      if(msg==='addressdelete'){
+        this.getaddresslist(this.acountinfo.token)
+      }
+    })
   },
   methods: {
     onClickLeft() {
@@ -51,10 +60,46 @@ export default {
     },
     onEdit(item, index) {
       this.$router.push({
-        path:'/order/myaddress/editaddress'
+        path:'/order/myaddress/editaddress',
+        query:{
+          user_id:item.user_id,
+          addid:item.add_id
+        }
       })
     },
+    //获取地址列表
+    async getaddresslist(userid){
+        let result = await getUserAddress(userid);
+        let useraddresslist = result.data;
+        this.list = []
+        useraddresslist.forEach((item,index)=>{
+            let listobj = {
+              id:(index+1),
+              name:item.address_name,
+              tel:item.address_phone,
+              address:item.address_area_detail,
+              user_id:item.user_id,
+              add_id:item._id,
+              isDefault:true
+            }
+            this.list.push(listobj)
+        })
+    },
+    //编辑修改成功以后
+    editokgetlist(){
+      this.getaddresslist(this.acountinfo.token)
+    },
+    //选中地址
+    selectadd(item){
+      this.$emit('selectadd',item)
+      this.$router.back()
+    }
   },
+  beforeDestroy(){
+    //订阅以后要取消订阅
+    pubsub.unsubscribe('addressok');
+    pubsub.unsubscribe('addressdelete')
+  }
 };
 </script>
 

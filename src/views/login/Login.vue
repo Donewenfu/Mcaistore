@@ -25,7 +25,7 @@
             v-if="showgetcode"
           >获取验证码</span>
           <span class="authcode" v-else>正在获取({{countdown}})</span>
-          <input type="text" placeholder="输入验证码" v-model="messagecode"/>
+          <input type="number" pattern="\d*" placeholder="输入验证码" v-model="messagecode"/>
         </div>
         <div class="login-form-account" :class="{on:!loginformactive}">
           <input type="text" placeholder="请输入用户名" />
@@ -149,7 +149,7 @@ export default {
     .login-bg-img {
       height: 220px;
       width: 100%;
-      background: url(../../images/login/login_bg.png) no-repeat;
+      background: url('https://s1.ax1x.com/2020/09/12/wUUrBd.png') no-repeat;
       background-size: 100% 100%;
     }
     .login-logo {

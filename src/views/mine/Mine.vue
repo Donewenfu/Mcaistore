@@ -20,7 +20,7 @@
     <div class="m-my-order">
       <div class="m-order-title">
         <p>我的订单</p>
-        <div class="m-order-arrow">
+        <div class="m-order-arrow" @click="$router.push('/orderdetail')">
           <span>查看全部订单</span>
           <i class="iconfont">&#xe628;</i>
         </div>
@@ -28,17 +28,29 @@
       <!-- 图标区域 我的订单-->
       <div class="m-order-icon">
         <ul>
-          <li>
+          <li @click="$router.push('/orderdetail')">
             <i class="iconfont">&#xe63d;</i>
-            <p>待支付</p>
+            <p>全部</p>
+            <span v-show="wzfnum>=1">{{wzfnum}}</span>
           </li>
-          <li>
+          <li @click='$router.push({
+            path:"/orderdetail",
+            query:{
+              target:"c"
+            }
+          })'>
             <i class="iconfont">&#xe7f3;</i>
             <p>待收货</p>
+             <span v-show="dshnum>=1">{{dshnum}}</span>
           </li>
-          <li>
+         <li @click='$router.push({
+            path:"/orderdetail",
+            query:{
+              target:"b"
+            }
+          })'>
             <i class="iconfont">&#xe601;</i>
-            <p>售后/退款</p>
+            <p>待支付</p>
           </li>
         </ul>
       </div>
@@ -55,7 +67,7 @@
             <p>绿卡会员</p>
             <span class="viptag">开卡立得</span>
           </li>
-          <li>
+          <li @click="$router.push('/order/myaddress')">
             <i class="iconfont">&#xe645;</i>
             <p>收货地址</p>
           </li>
@@ -86,7 +98,7 @@
 
 <script>
 //请求首页数据
-import { getHomeData } from "@/service/api/index";
+import { getHomeData,getOrder } from "@/service/api/index";
 //猜你喜欢
 import Mlike from "@/views/home/components/Mlike/Mlike";
 //引入组件
@@ -101,7 +113,9 @@ export default {
     return {
       //猜你喜欢数据
       MlikeList: [],
-      userinfo:''
+      userinfo:'',
+      wzfnum:'',
+      dshnum:''
     };
   },
   components: {
@@ -113,6 +127,9 @@ export default {
     this.getIndexData();
     //用户数据获取
     this.userinfo = JSON.parse(getLocalStorage('userinfo'));
+    //获取未支付
+    this.getwillpay()
+    
   },
   methods: {
     ...mapActions(['loginouts']),
@@ -139,6 +156,14 @@ export default {
           // on cancel
         });
     },
+    //获取未支付数字
+    async getwillpay(){
+      // console.log(this.acountinfo.token)
+      let result1 = await getOrder(this.acountinfo.token,'will')
+      let result2 = await getOrder(this.acountinfo.token,'pay')
+      this.wzfnum = result1.data.length
+      this.dshnum = result2.data.length
+    }
   },
   computed: {
     ...mapState(["shopCart", "acountinfo"]),
@@ -245,6 +270,16 @@ export default {
           i {
             font-size: 28px;
             color: #979797;
+          }
+          span{
+            font-size: 12px;
+            background-color: #fc6061;
+            color: #fff;
+            border-radius: 20px;
+            padding: 0px 6px;
+            position: absolute;
+            top: -3px;
+            left: 60px;
           }
         }
       }

@@ -41,13 +41,17 @@ import Mcateproduct from "./components/Mcateproduct/Mcateproduct";
 //引入滚动插件better-scroll
 import better from "better-scroll";
 //网络请求
-import { getCategoryData, getCategoryproduct } from "@/service/api/index";
+import {
+  getCategoryData,
+  getCategoryproduct,
+  addproductadd,
+} from "@/service/api/index";
 
 //引入消息订阅
 import pubsub from "pubsub-js";
 
 //引入vuex
-import { mapMutations } from "vuex";
+import { mapMutations, mapState } from "vuex";
 
 export default {
   data() {
@@ -105,24 +109,42 @@ export default {
     this.getcateproduct();
     //订阅消息的名称
     let addcartsubscription = "cateadd";
-    pubsub.subscribe(addcartsubscription, (msg, value) => {
-      //判断是否是订阅的添加购物车的消息
-      if (msg == "cateadd") {
-        this.Add_GOODS({
-          goods_id: value.id,
-          goods_img: value.small_image,
-          goods_price: value.price,
-          good_name: value.name,
-        });
-        this.$toast({
-          message: "商品添加成功！",
-          duration: 1600,
-        });
+    pubsub.subscribe(addcartsubscription, async (msg, value) => {
+      //判断是否登录
+      if (!this.acountinfo.token) {
+        this.$router.push("/login");
+        return;
+      } else {
+        //判断是否是订阅的添加购物车的消息
+        if (msg == "cateadd") {
+          let result = await addproductadd(
+            this.acountinfo.token,
+            value.id,
+            value.name,
+            value.price,
+            value.small_image
+          );
+          if (result.success_code === 200) {
+            this.Add_GOODS({
+              goods_id: value.id,
+              goods_img: value.small_image,
+              goods_price: value.price,
+              good_name: value.name,
+            });
+            this.$toast({
+              message: "商品添加成功！",
+              duration: 1600,
+            });
+          }
+        }
       }
     });
   },
   beforeDestroy() {
     pubsub.unsubscribe("cateadd");
+  },
+  computed: {
+    ...mapState(["acountinfo"]),
   },
 };
 </script>

@@ -173,12 +173,12 @@ body {
 /* 字体图标 */
 @font-face {
 	font-family: 'iconfont';  /* project id 2040540 */
-	src: url('//at.alicdn.com/t/font_2040540_4doucyuyzmg.eot');
-	src: url('//at.alicdn.com/t/font_2040540_4doucyuyzmg.eot?#iefix') format('embedded-opentype'),
-	url('//at.alicdn.com/t/font_2040540_4doucyuyzmg.woff2') format('woff2'),
-	url('//at.alicdn.com/t/font_2040540_4doucyuyzmg.woff') format('woff'),
-	url('//at.alicdn.com/t/font_2040540_4doucyuyzmg.ttf') format('truetype'),
-	url('//at.alicdn.com/t/font_2040540_4doucyuyzmg.svg#iconfont') format('svg');
+	src: url('//at.alicdn.com/t/font_2040540_pajdejl72h8.eot');
+	src: url('//at.alicdn.com/t/font_2040540_pajdejl72h8.eot?#iefix') format('embedded-opentype'),
+	url('//at.alicdn.com/t/font_2040540_pajdejl72h8.woff2') format('woff2'),
+	url('//at.alicdn.com/t/font_2040540_pajdejl72h8.woff') format('woff'),
+	url('//at.alicdn.com/t/font_2040540_pajdejl72h8.ttf') format('truetype'),
+	url('//at.alicdn.com/t/font_2040540_pajdejl72h8.svg#iconfont') format('svg');
   }
 
 .iconfont {

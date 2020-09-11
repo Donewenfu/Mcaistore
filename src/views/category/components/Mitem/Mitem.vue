@@ -37,10 +37,7 @@ export default {
   },
   methods: {
     addprduct(item){
-      if(!this.acountinfo.token){
-        this.$router.push('/login')
-        return
-      }
+      
       pubsub.publish('cateadd',item)
     }
   },
