@@ -406,7 +406,7 @@ export default {
       width: 200px;
     }
     p{
-      font-size: 16px;
+      font-size: 14px;
       color: #999;
     }
   }
