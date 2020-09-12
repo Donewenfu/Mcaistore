@@ -5,7 +5,7 @@
     <!-- 导航 -->
     <van-nav-bar title="我的地址" left-arrow :fixed="true" @click-left="onClickLeft" />
     <!-- 地址列表区域 -->
-    <div class="myaddress-list" v-if='list.length>=1'>
+    <div class="myaddress-list">
       <van-address-list
         v-model="chosenAddressId"
         :list="list"
@@ -14,10 +14,10 @@
         @select='selectadd'
       />
     </div>
-    <div class="listnone" v-else>
+    <div class="listnone" v-show="list.length<1">
             <img src="../../../images/cart/nonelist.png" alt="">
-            <p>暂时还没有相关订单</p>
-          </div>
+            <p>暂时还没有地址</p>
+    </div>
   </div>
 </template>
 
@@ -118,7 +118,10 @@ export default {
   margin: 0 auto;
 }
  .listnone{
-    margin-top: 156px;
+   position: absolute;
+   left: 50%;
+   top: 30%;
+   transform: translate(-50%,-10%);
     text-align: center;
     img{
       margin: 0 auto;
